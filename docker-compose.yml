@@ -1,0 +1,17 @@
+services:
+  sfy-buoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-miniconda
+    image: sfy-buoy-docker:20.04
+    container_name: sfy-buoy-container
+    volumes:
+      - .:/work  # Current project directory (read-write)
+      - ${BUOY_DATA_PATH}:/data/buoys  # Buoy data (read-write)
+      - ${CODE_PATH}:/external-code  # External code (read-write)
+    working_dir: /work
+    stdin_open: true
+    tty: true
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+      - TZ=Etc/UTC
