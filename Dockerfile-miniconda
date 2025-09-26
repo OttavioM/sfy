@@ -43,4 +43,20 @@ RUN /bin/bash -c "source /root/.cargo/env && \
 # Activate conda environment by default
 RUN echo "source activate $(head -1 environment.yml | cut -d' ' -f2)" >> ~/.bashrc
 
+# Update the system
+RUN apt update
+
+# Install Rust
+# Install Rust and tools (all in one RUN to reduce layers)
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y && \
+    . /root/.cargo/env && \
+    rustup component add llvm-tools-preview && \
+    cargo install cargo-binutils && \
+    rustup target add thumbv7em-none-eabihf
+	
+# Targets and tools from cargo
+RUN cargo install cargo-binutils
+RUN rustup target add thumbv7em-none-eabihf
+RUN rustup component add llvm-tools-preview
+
 CMD ["/bin/bash"]
